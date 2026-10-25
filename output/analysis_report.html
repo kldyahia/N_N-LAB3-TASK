@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Penguins Binary Classification — Lab 3 Report</title>
+<style>
+:root { color-scheme: light; }
+body { max-width: 1100px; margin: 0 auto; padding: 32px 24px 60px; font-family: Segoe UI, Arial, sans-serif; line-height: 1.6; color: #182230; background: #f8fafc; }
+main { background: white; padding: 36px; border: 1px solid #e2e8f0; border-radius: 14px; box-shadow: 0 8px 28px rgba(15, 23, 42, .06); }
+h1, h2, h3, h4 { line-height: 1.25; color: #0f172a; }
+h1 { border-bottom: 3px solid #2563eb; padding-bottom: 14px; }
+h2 { margin-top: 34px; padding-bottom: 8px; border-bottom: 1px solid #e2e8f0; }
+h3 { margin-top: 28px; }
+img { display: block; max-width: 100%; height: auto; margin: 18px auto; border: 1px solid #e2e8f0; border-radius: 8px; }
+table { border-collapse: collapse; width: auto; max-width: 100%; margin: 14px 0 22px; }
+th, td { border: 1px solid #cbd5e1; padding: 8px 12px; text-align: left; }
+th { background: #eff6ff; }
+code { background: #f1f5f9; border-radius: 4px; padding: 2px 4px; }
+blockquote { border-left: 4px solid #93c5fd; margin-left: 0; padding-left: 16px; color: #475569; }
+@media (max-width: 700px) { body { padding: 12px; } main { padding: 18px; } }
+</style>
+</head>
+<body><main>
+<h1>Penguins Binary Classification — Lab 3 Analysis Report</h1>
+<h2>1. Objective</h2>
+<p>Implement and compare Perceptron and Adaline on two-class Penguins classification tasks using exactly two selected features, as required by Lab 3.</p>
+<h2>2. Dataset and preprocessing</h2>
+<ul>
+<li>Dataset: <code>penguins.csv</code>.</li>
+<li>Rows preserved during loading: <strong>150</strong>.</li>
+<li>Classes: Adelie, Chinstrap, Gentoo (the selected binary experiment uses the two classes shown in each result).</li>
+<li>Selectable features: CulmenLength, CulmenDepth, FlipperLength, OriginLocation, BodyMass.</li>
+<li>Numeric missing values are imputed with medians calculated from the training split only; no row is dropped.</li>
+<li><code>OriginLocation</code> is mapped to a deterministic numeric code so it remains one selectable feature and the visualization stays two-dimensional. This coding is nominal, not ordinal; numeric distance between location codes has no real-world meaning.</li>
+<li>Each class contributes 30 non-repeated training samples and the remaining 20 testing samples. The fixed random seed is 42 so runs are reproducible.</li>
+<li>The two selected features are standardized with training-set means and standard deviations. Test data use the same training-derived values.</li>
+<li>Class A is encoded as -1; Class B as +1. Both decision boundaries are linear.</li>
+<li>No scikit-learn package or ready-made confusion-matrix utility is used. Confusion matrices and overall accuracy are computed by custom loops in <code>evaluation.py</code>.</li>
+</ul>
+<h2>3. Training settings</h2>
+<p>The generated comparison uses learning rate = 0.01, maximum epochs = 150, Bias enabled, and MSE threshold = 0.01 for Adaline. The GUI lets the user change these values for an individual run.
+Perceptron updates weights when a sample is misclassified. Adaline uses stochastic gradient descent and updates its weights using the current sample's linear-output error; MSE is checked after each epoch.</p>
+<h2>4. Representative plots and analysis</h2>
+<p>Five different feature pairs are shown for each algorithm. Examples are selected across the observed performance ranking, from high to low. All 30 feature-pair/class-pair results per algorithm are included in <code>experiment_results.csv</code>.</p>
+<h3>4.1. Perceptron</h3>
+<h4>1. Highest-performing example</h4>
+<ul>
+<li><strong>Classes:</strong> Chinstrap (Class A, -1) vs Gentoo (Class B, +1).</li>
+<li><strong>Features:</strong> <code>OriginLocation</code> and <code>BodyMass</code>.</li>
+<li><strong>Test accuracy:</strong> 100.0% (40/40 correct).</li>
+<li><strong>Epochs used:</strong> 2; <strong>final training MSE:</strong> 0.9672.</li>
+</ul>
+<table>
+<thead>
+<tr>
+  <th>Actual \ Predicted</th>
+  <th style="text-align:right">Class A</th>
+  <th style="text-align:right">Class B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Class A</td>
+  <td style="text-align:right">20</td>
+  <td style="text-align:right">0</td>
+</tr>
+<tr>
+  <td>Class B</td>
+  <td style="text-align:right">0</td>
+  <td style="text-align:right">20</td>
+</tr>
+</tbody>
+</table>
+<p><img src="figures/perceptron_01_originlocation_bodymass_chinstrap_vs_gentoo.png" alt="Perceptron decision boundary — OriginLocation and BodyMass" /></p>
+<p><strong>Interpretation:</strong> The model shows strong separation on this test split. Class recalls are Class A 100.0% and Class B 100.0%. A linear classifier can only learn a straight decision boundary in the selected two-feature space.</p>
+<h4>2. Upper-range example</h4>
+<ul>
+<li><strong>Classes:</strong> Chinstrap (Class A, -1) vs Gentoo (Class B, +1).</li>
+<li><strong>Features:</strong> <code>CulmenLength</code> and <code>OriginLocation</code>.</li>
+<li><strong>Test accuracy:</strong> 100.0% (40/40 correct).</li>
+<li><strong>Epochs used:</strong> 2; <strong>final training MSE:</strong> 0.8727.</li>
+</ul>
+<table>
+<thead>
+<tr>
+  <th>Actual \ Predicted</th>
+  <th style="text-align:right">Class A</th>
+  <th style="text-align:right">Class B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Class A</td>
+  <td style="text-align:right">20</td>
+  <td style="text-align:right">0</td>
+</tr>
+<tr>
+  <td>Class B</td>
+  <td style="text-align:right">0</td>
+  <td style="text-align:right">20</td>
+</tr>
+</tbody>
+</table>
+<p><img src="figures/perceptron_02_culmenlength_originlocation_chinstrap_vs_gentoo.png" alt="Perceptron decision boundary — CulmenLength and OriginLocation" /></p>
+<p><strong>Interpretation:</strong> The model shows strong separation on this test split. Class recalls are Class A 100.0% and Class B 100.0%. A linear classifier can only learn a straight decision boundary in the selected two-feature space.</p>
+<h4>3. Middle-range example</h4>
+<ul>
+<li><strong>Classes:</strong> Adelie (Class A, -1) vs Gentoo (Class B, +1).</li>
+<li><strong>Features:</strong> <code>CulmenLength</code> and <code>CulmenDepth</code>.</li>
+<li><strong>Test accuracy:</strong> 97.5% (39/40 correct).</li>
+<li><strong>Epochs used:</strong> 2; <strong>final training MSE:</strong> 0.9416.</li>
+</ul>
+<table>
+<thead>
+<tr>
+  <th>Actual \ Predicted</th>
+  <th style="text-align:right">Class A</th>
+  <th style="text-align:right">Class B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Class A</td>
+  <td style="text-align:right">20</td>
+  <td style="text-align:right">0</td>
+</tr>
+<tr>
+  <td>Class B</td>
+  <td style="text-align:right">1</td>
+  <td style="text-align:right">19</td>
+</tr>
+</tbody>
+</table>
+<p><img src="figures/perceptron_03_culmenlength_culmendepth_adelie_vs_gentoo.png" alt="Perceptron decision boundary — CulmenLength and CulmenDepth" /></p>
+<p><strong>Interpretation:</strong> The model shows strong separation on this test split. Class recalls are Class A 100.0% and Class B 95.0%. A linear classifier can only learn a straight decision boundary in the selected two-feature space.</p>
+<h4>4. Lower-range example</h4>
+<ul>
+<li><strong>Classes:</strong> Adelie (Class A, -1) vs Gentoo (Class B, +1).</li>
+<li><strong>Features:</strong> <code>CulmenLength</code> and <code>BodyMass</code>.</li>
+<li><strong>Test accuracy:</strong> 90.0% (36/40 correct).</li>
+<li><strong>Epochs used:</strong> 150; <strong>final training MSE:</strong> 0.8513.</li>
+</ul>
+<table>
+<thead>
+<tr>
+  <th>Actual \ Predicted</th>
+  <th style="text-align:right">Class A</th>
+  <th style="text-align:right">Class B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Class A</td>
+  <td style="text-align:right">18</td>
+  <td style="text-align:right">2</td>
+</tr>
+<tr>
+  <td>Class B</td>
+  <td style="text-align:right">2</td>
+  <td style="text-align:right">18</td>
+</tr>
+</tbody>
+</table>
+<p><img src="figures/perceptron_04_culmenlength_bodymass_adelie_vs_gentoo.png" alt="Perceptron decision boundary — CulmenLength and BodyMass" /></p>
+<p><strong>Interpretation:</strong> The model shows strong separation on this test split. Class recalls are Class A 90.0% and Class B 90.0%. A linear classifier can only learn a straight decision boundary in the selected two-feature space.</p>
+<h4>5. Lowest-performing example</h4>
+<ul>
+<li><strong>Classes:</strong> Adelie (Class A, -1) vs Chinstrap (Class B, +1).</li>
+<li><strong>Features:</strong> <code>CulmenDepth</code> and <code>BodyMass</code>.</li>
+<li><strong>Test accuracy:</strong> 52.5% (21/40 correct).</li>
+<li><strong>Epochs used:</strong> 150; <strong>final training MSE:</strong> 0.9863.</li>
+</ul>
+<table>
+<thead>
+<tr>
+  <th>Actual \ Predicted</th>
+  <th style="text-align:right">Class A</th>
+  <th style="text-align:right">Class B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Class A</td>
+  <td style="text-align:right">8</td>
+  <td style="text-align:right">12</td>
+</tr>
+<tr>
+  <td>Class B</td>
+  <td style="text-align:right">7</td>
+  <td style="text-align:right">13</td>
+</tr>
+</tbody>
+</table>
+<p><img src="figures/perceptron_05_culmendepth_bodymass_adelie_vs_chinstrap.png" alt="Perceptron decision boundary — CulmenDepth and BodyMass" /></p>
+<p><strong>Interpretation:</strong> The model shows weak separation for this linear model on this test split. Recall is uneven (Class A: 40.0%, Class B: 65.0%), so the overall accuracy should be read alongside the confusion matrix. A linear classifier can only learn a straight decision boundary in the selected two-feature space.</p>
+<p><strong>Highest test accuracy for Perceptron: 100.0%.</strong>
+Best-performing feature/class combination(s): <code>CulmenLength + CulmenDepth</code> (Adelie vs Chinstrap); <code>CulmenLength + OriginLocation</code> (Chinstrap vs Gentoo); <code>CulmenDepth + FlipperLength</code> (Chinstrap vs Gentoo); <code>CulmenDepth + OriginLocation</code> (Chinstrap vs Gentoo); <code>CulmenDepth + BodyMass</code> (Chinstrap vs Gentoo); <code>FlipperLength + OriginLocation</code> (Adelie vs Gentoo); <code>FlipperLength + OriginLocation</code> (Chinstrap vs Gentoo); <code>OriginLocation + BodyMass</code> (Adelie vs Gentoo); <code>OriginLocation + BodyMass</code> (Chinstrap vs Gentoo).</p>
+<h3>4.2. Adaline</h3>
+<h4>1. Highest-performing example</h4>
+<ul>
+<li><strong>Classes:</strong> Chinstrap (Class A, -1) vs Gentoo (Class B, +1).</li>
+<li><strong>Features:</strong> <code>OriginLocation</code> and <code>BodyMass</code>.</li>
+<li><strong>Test accuracy:</strong> 100.0% (40/40 correct).</li>
+<li><strong>Epochs used:</strong> 10; <strong>final training MSE:</strong> 0.0095.</li>
+</ul>
+<table>
+<thead>
+<tr>
+  <th>Actual \ Predicted</th>
+  <th style="text-align:right">Class A</th>
+  <th style="text-align:right">Class B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Class A</td>
+  <td style="text-align:right">20</td>
+  <td style="text-align:right">0</td>
+</tr>
+<tr>
+  <td>Class B</td>
+  <td style="text-align:right">0</td>
+  <td style="text-align:right">20</td>
+</tr>
+</tbody>
+</table>
+<p><img src="figures/adaline_01_originlocation_bodymass_chinstrap_vs_gentoo.png" alt="Adaline decision boundary — OriginLocation and BodyMass" /></p>
+<p><strong>Interpretation:</strong> The model shows strong separation on this test split. Class recalls are Class A 100.0% and Class B 100.0%. A linear classifier can only learn a straight decision boundary in the selected two-feature space.</p>
+<h4>2. Upper-range example</h4>
+<ul>
+<li><strong>Classes:</strong> Chinstrap (Class A, -1) vs Gentoo (Class B, +1).</li>
+<li><strong>Features:</strong> <code>CulmenLength</code> and <code>OriginLocation</code>.</li>
+<li><strong>Test accuracy:</strong> 100.0% (40/40 correct).</li>
+<li><strong>Epochs used:</strong> 5; <strong>final training MSE:</strong> 0.0051.</li>
+</ul>
+<table>
+<thead>
+<tr>
+  <th>Actual \ Predicted</th>
+  <th style="text-align:right">Class A</th>
+  <th style="text-align:right">Class B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Class A</td>
+  <td style="text-align:right">20</td>
+  <td style="text-align:right">0</td>
+</tr>
+<tr>
+  <td>Class B</td>
+  <td style="text-align:right">0</td>
+  <td style="text-align:right">20</td>
+</tr>
+</tbody>
+</table>
+<p><img src="figures/adaline_02_culmenlength_originlocation_chinstrap_vs_gentoo.png" alt="Adaline decision boundary — CulmenLength and OriginLocation" /></p>
+<p><strong>Interpretation:</strong> The model shows strong separation on this test split. Class recalls are Class A 100.0% and Class B 100.0%. A linear classifier can only learn a straight decision boundary in the selected two-feature space.</p>
+<h4>3. Middle-range example</h4>
+<ul>
+<li><strong>Classes:</strong> Adelie (Class A, -1) vs Gentoo (Class B, +1).</li>
+<li><strong>Features:</strong> <code>CulmenDepth</code> and <code>FlipperLength</code>.</li>
+<li><strong>Test accuracy:</strong> 97.5% (39/40 correct).</li>
+<li><strong>Epochs used:</strong> 150; <strong>final training MSE:</strong> 0.0431.</li>
+</ul>
+<table>
+<thead>
+<tr>
+  <th>Actual \ Predicted</th>
+  <th style="text-align:right">Class A</th>
+  <th style="text-align:right">Class B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Class A</td>
+  <td style="text-align:right">19</td>
+  <td style="text-align:right">1</td>
+</tr>
+<tr>
+  <td>Class B</td>
+  <td style="text-align:right">0</td>
+  <td style="text-align:right">20</td>
+</tr>
+</tbody>
+</table>
+<p><img src="figures/adaline_03_culmendepth_flipperlength_adelie_vs_gentoo.png" alt="Adaline decision boundary — CulmenDepth and FlipperLength" /></p>
+<p><strong>Interpretation:</strong> The model shows strong separation on this test split. Class recalls are Class A 95.0% and Class B 100.0%. A linear classifier can only learn a straight decision boundary in the selected two-feature space.</p>
+<h4>4. Lower-range example</h4>
+<ul>
+<li><strong>Classes:</strong> Adelie (Class A, -1) vs Chinstrap (Class B, +1).</li>
+<li><strong>Features:</strong> <code>CulmenLength</code> and <code>FlipperLength</code>.</li>
+<li><strong>Test accuracy:</strong> 90.0% (36/40 correct).</li>
+<li><strong>Epochs used:</strong> 150; <strong>final training MSE:</strong> 0.2122.</li>
+</ul>
+<table>
+<thead>
+<tr>
+  <th>Actual \ Predicted</th>
+  <th style="text-align:right">Class A</th>
+  <th style="text-align:right">Class B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Class A</td>
+  <td style="text-align:right">18</td>
+  <td style="text-align:right">2</td>
+</tr>
+<tr>
+  <td>Class B</td>
+  <td style="text-align:right">2</td>
+  <td style="text-align:right">18</td>
+</tr>
+</tbody>
+</table>
+<p><img src="figures/adaline_04_culmenlength_flipperlength_adelie_vs_chinstrap.png" alt="Adaline decision boundary — CulmenLength and FlipperLength" /></p>
+<p><strong>Interpretation:</strong> The model shows strong separation on this test split. Class recalls are Class A 90.0% and Class B 90.0%. A linear classifier can only learn a straight decision boundary in the selected two-feature space.</p>
+<h4>5. Lowest-performing example</h4>
+<ul>
+<li><strong>Classes:</strong> Adelie (Class A, -1) vs Chinstrap (Class B, +1).</li>
+<li><strong>Features:</strong> <code>CulmenDepth</code> and <code>OriginLocation</code>.</li>
+<li><strong>Test accuracy:</strong> 50.0% (20/40 correct).</li>
+<li><strong>Epochs used:</strong> 150; <strong>final training MSE:</strong> 0.9716.</li>
+</ul>
+<table>
+<thead>
+<tr>
+  <th>Actual \ Predicted</th>
+  <th style="text-align:right">Class A</th>
+  <th style="text-align:right">Class B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Class A</td>
+  <td style="text-align:right">8</td>
+  <td style="text-align:right">12</td>
+</tr>
+<tr>
+  <td>Class B</td>
+  <td style="text-align:right">8</td>
+  <td style="text-align:right">12</td>
+</tr>
+</tbody>
+</table>
+<p><img src="figures/adaline_05_culmendepth_originlocation_adelie_vs_chinstrap.png" alt="Adaline decision boundary — CulmenDepth and OriginLocation" /></p>
+<p><strong>Interpretation:</strong> The model shows weak separation for this linear model on this test split. Class recalls are Class A 40.0% and Class B 60.0%. A linear classifier can only learn a straight decision boundary in the selected two-feature space.</p>
+<p><strong>Highest test accuracy for Adaline: 100.0%.</strong>
+Best-performing feature/class combination(s): <code>CulmenLength + CulmenDepth</code> (Adelie vs Chinstrap); <code>CulmenLength + CulmenDepth</code> (Chinstrap vs Gentoo); <code>CulmenLength + FlipperLength</code> (Chinstrap vs Gentoo); <code>CulmenLength + OriginLocation</code> (Chinstrap vs Gentoo); <code>CulmenDepth + FlipperLength</code> (Chinstrap vs Gentoo); <code>CulmenDepth + OriginLocation</code> (Chinstrap vs Gentoo); <code>CulmenDepth + BodyMass</code> (Chinstrap vs Gentoo); <code>FlipperLength + OriginLocation</code> (Adelie vs Gentoo); <code>FlipperLength + OriginLocation</code> (Chinstrap vs Gentoo); <code>FlipperLength + BodyMass</code> (Chinstrap vs Gentoo); <code>OriginLocation + BodyMass</code> (Chinstrap vs Gentoo).</p>
+<h2>5. Overall comparison</h2>
+<p>Use the full <code>experiment_results.csv</code> to compare all 30 combinations per algorithm. A high test score means the selected linear boundary separated the held-out samples well in that split; a lower score may indicate feature overlap, a non-linear class relationship, or model settings that did not converge sufficiently. These observations apply to this fixed split and should not be treated as a universal performance guarantee.</p>
+<h2>6. Important implementation notes</h2>
+<ul>
+<li>The plotted decision boundary is derived from the trained weights and bias after applying the same training-fitted preprocessing to the plotted grid.</li>
+<li>Circle markers represent training samples; triangle markers represent test samples. Test markers are hollow to make the held-out points easy to identify.</li>
+<li><code>OriginLocation</code> encoding is a practical compromise to satisfy the two-feature/2-D plot requirement. For a production model, a categorical method designed for nominal variables would be preferable, but one-hot encoding would expand this selected feature into multiple input dimensions.</li>
+<li>Each run uses a fixed train/test split seed for fair comparison. Changing the seed is a useful follow-up sensitivity check, but is not part of this fixed-seed report.</li>
+</ul>
+<h2>7. Deliverables</h2>
+<ul>
+<li><code>experiment_results.csv</code>: all tested feature-pair/class-pair combinations (30 per algorithm).</li>
+<li><code>figures/</code>: five representative plots per algorithm.</li>
+<li>This Markdown report with confusion matrices and interpretations.</li>
+</ul>
+
+</main></body></html>
